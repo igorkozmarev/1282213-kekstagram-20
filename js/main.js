@@ -1,8 +1,9 @@
 'use strict';
-var photoObjectFields = {
-  photosQuantity: 25,
-  likesMin: 15,
-  likesMax: 200,
+ var photosQuantity = 25;
+ var likesMin = 15;
+ var likesMax = 200;
+
+ var photoObjectFields = {
   comments :
   [
     'Всё отлично!',
@@ -25,38 +26,39 @@ var photoObjectFields = {
 var getRandomNumber = function (min, max) {
   return Math.round(Math.random() * (max - min) + min);
 };
-var creationArray = function() {
+var createMockData = function() {
   var arr = [];
   for (var i = 0; i < 25; i++) {
     var comments=[];
     var obj = {
       url : `photos/${i+1}.jpg`,
-      discriptions: ``,
+      description: '',
       likes: getRandomNumber(15,200),
       comments: comments,
     };
     var commentObj = {
       avatar: `img/avatar-${getRandomNumber(1,6)}.svg`,
-      message: photoObjectFields.comments[getRandomNumber(1,6)-1],
-      name: photoObjectFields.names[getRandomNumber(1,6)-1],
+      message: photoObjectFields.comments[getRandomNumber(0,5)],
+      name: photoObjectFields.names[getRandomNumber(0,5)],
     }
-    comments.push(commentObj);
-    arr.push(obj);
   }
   return arr;
 }
-var addPhotoToTemplate = function(photo) {
-  var template = document.querySelector('#picture');
-  var picture = template.content.querySelector('.picture');
-  var clone = picture.cloneNode(true);
-  clone.querySelector('.picture__img').src = photo.url;
-  clone.querySelector('.picture__likes').textContent = photo.likes;
-  clone.querySelector('.picture__comments').textContent = photo.comments[0].message;
-  template.content.appendChild(clone);
+
+var simularPictureElement = document.querySelector('.pictures');
+var simularPictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
+
+var renderPicture = function(picture) {
+  var pictureElement = simularPictureTemplate.cloneNode(true);
+  pictureElement.querySelector('.picture__img').src = obj.url;
+  pictureElement.querySelector('.picture__likes').textContent = obj.likes;
+  pictureElement.querySelector('.picture__comments').textContent = obj.comments;
+
+  return pictureElement;
 }
-var photoes = creationArray();
-for (var i = 0; i<photoes.length; i++)
-{
-  addPhotoToTemplate(photoes[i]);
+
+var fragment = document.createDocumentFragment();
+for (var i = 0; i < picture.length; i++) {
+  fragment.appendChild(renderPicture(picture[i]));
 }
-console.log(creationArray());
+simularPictureElement.appendChild(pictureElement);
