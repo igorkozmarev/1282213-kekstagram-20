@@ -1,10 +1,11 @@
-const PHOTOS_QUANTITY = 25;
-const LIKES_MIN = 15;
-const LIKES_MAX = 200;
-const NUMBER_AVATAR_MIN = 1;
-const NUMBER_AVATAR_MAX = 6;
-const PHOTO_OBJECT_FIELDS = {
-  comments :
+'use strict';
+var PHOTOS_QUANTITY = 25;
+var LIKES_MIN = 15;
+var LIKES_MAX = 200;
+var NUMBER_AVATAR_MIN = 1;
+var NUMBER_AVATAR_MAX = 6;
+var PHOTO_OBJECT_FIELDS = {
+  comments:
   [
     'Всё отлично!',
     'В целом всё неплохо. Но не всё.',
@@ -13,7 +14,7 @@ const PHOTO_OBJECT_FIELDS = {
     'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
     'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
   ],
-  names :
+  names:
   [
     'Пётр',
     'Иван',
@@ -24,47 +25,52 @@ const PHOTO_OBJECT_FIELDS = {
   ],
 };
 
-'use strict';
-
 var getRandomNumber = function (min, max) {
   return Math.round(Math.random() * (max - min) + min);
 };
 
-var createMockData = function() {
-  var arr = [];
-  for (var i = 0; i < PHOTOS_QUANTITY; i++) {
-    var comments=[];
-    var obj = {
-      url : `photos/${i+1}.jpg`,
+var createMockData = function () {
+  var photos = [];
+  for (var i = 1; i <= PHOTOS_QUANTITY; i++) {
+    var comments = [];
+    var objPhoto = {
+      url: 'photos/' + i + '.jpg',
       description: '',
-      likes: getRandomNumber(LIKES_MIN,LIKES_MAX),
+      likes: getRandomNumber(LIKES_MIN, LIKES_MAX),
       comments: comments,
     };
-    var commentObj = {
-      avatar: `img/avatar-${getRandomNumber(NUMBER_AVATAR_MIN,NUMBER_AVATAR_MAX)}.svg`,
-      message: PHOTO_OBJECT_FIELDS.comments[getRandomNumber(NUMBER_AVATAR_MIN,NUMBER_AVATAR_MAX)-1],
-      name: PHOTO_OBJECT_FIELDS.names[getRandomNumber(NUMBER_AVATAR_MIN,NUMBER_AVATAR_MAX)-1],
+    for (var j = 0; j < getRandomNumber(NUMBER_AVATAR_MIN, NUMBER_AVATAR_MAX); j++) {
+      var commentObj = {
+        avatar: 'img/avatar-' + getRandomNumber(NUMBER_AVATAR_MIN, NUMBER_AVATAR_MAX) + '.svg',
+        message: PHOTO_OBJECT_FIELDS.comments[getRandomNumber(NUMBER_AVATAR_MIN, NUMBER_AVATAR_MAX) - 1],
+        name: PHOTO_OBJECT_FIELDS.names[getRandomNumber(NUMBER_AVATAR_MIN, NUMBER_AVATAR_MAX) - 1],
+      };
+      comments.push(commentObj);
     }
-    arr.push(commentObj);
+    photos.push(objPhoto);
   }
-  return arr;
-}
+  return photos;
+};
 
-var simularPictureElement = document.querySelector('.pictures');
-var simularPictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
+var mockData = createMockData();
 
-var renderPicture = function(picture) {
-  var pictureElement = simularPictureTemplate.cloneNode(true);
-  pictureElement.querySelector('.picture__img').src = obj.url;
-  pictureElement.querySelector('.picture__likes').textContent = obj.likes;
-  pictureElement.querySelector('.picture__comments').textContent = obj.comments;
+var similarPictureElement = document.querySelector('.pictures');
+var similarPictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
+
+var renderPicture = function (picture) {
+  var pictureElement = similarPictureTemplate.cloneNode(true);
+  pictureElement.querySelector('.picture__img').src = picture.url;
+  pictureElement.querySelector('.picture__likes').textContent = picture.likes;
+  pictureElement.querySelector('.picture__comments').textContent = picture.comments.length;
 
   return pictureElement;
-}
+};
 
 var fragment = document.createDocumentFragment();
-for (var i = 0; i < picture.length; i++) {
-  fragment.appendChild(renderPicture(picture[i]));
-}
 
-console.log(createMockData());
+mockData.forEach(function (picture) {
+  fragment.appendChild(renderPicture(picture));
+});
+
+similarPictureElement.appendChild(fragment);
+
