@@ -74,3 +74,55 @@ mockData.forEach(function (picture) {
 
 similarPictureElement.appendChild(fragment);
 
+// Заполнение элемента данными
+var similarBigPictureElement = document.querySelector('.big-picture');
+similarBigPictureElement.classList.remove('hidden');
+
+var renderBigPicture = function (picture) {
+  var bigPictureElement = similarPictureTemplate.cloneNode(true);
+  bigPictureElement.querySelector('.big-picture__img').src = picture.url;
+  bigPictureElement.querySelector('.likes-count').textContent = picture.likes;
+  bigPictureElement.querySelector('.comments__count').textContent = picture.comments.length;
+
+  return bigPictureElement;
+};
+
+mockData.forEach(function (bigPicture) {
+  fragment.appendChild(renderBigPicture(bigPicture));
+});
+
+
+// функция для создания элемента
+var makeElement = function (tagName, className, text) {
+  var element = document.createElement(tagName);
+  element.classList.add(className);
+  if (text) {
+    element.textContent = text;
+  }
+  return element;
+};
+
+// функция для создания комментария
+var createComment = function (comment) {
+
+  var listItem = makeElement('li', 'social__comment');
+
+  var image = makeElement('img', 'social__picture');
+  image.src = comment.avatar;
+  image.alt = comment.name;
+  listItem.appendChild(image);
+
+  var text = document.createElement('p', 'social__text', comment.message);
+  listItem.appendChild(text);
+
+  return listItem;
+};
+
+var commentList = document.querySelector('.social__comments');
+var cardItem = createComment();
+commentList.appendChild(cardItem);
+
+
+// Отключение скролла на заднем фоне
+var modalWindow = document.body;
+modalWindow.classList.add('modal-open');
