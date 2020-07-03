@@ -35,7 +35,7 @@ var createMockData = function () {
     var comments = [];
     var objPhoto = {
       url: 'photos/' + i + '.jpg',
-      description: '',
+      description: 'Описание ' + i,
       likes: getRandomNumber(LIKES_MIN, LIKES_MAX),
       comments: comments,
     };
@@ -75,22 +75,24 @@ mockData.forEach(function (picture) {
 similarPictureElement.appendChild(fragment);
 
 // Заполнение элемента данными
-var similarBigPictureElement = document.querySelector('.big-picture');
-similarBigPictureElement.classList.remove('hidden');
+
 
 var renderBigPicture = function (picture) {
-  var bigPictureElement = similarPictureTemplate.cloneNode(true);
-  bigPictureElement.querySelector('.big-picture__img').src = picture.url;
-  bigPictureElement.querySelector('.likes-count').textContent = picture.likes;
-  bigPictureElement.querySelector('.comments__count').textContent = picture.comments.length;
+  var similarBigPictureElement = document.querySelector('.big-picture');
+  similarBigPictureElement.classList.remove('hidden');
+  similarBigPictureElement.querySelector('.big-picture__img').src = picture.url;
+  similarBigPictureElement.querySelector('.likes-count').textContent = picture.likes;
+  similarBigPictureElement.querySelector('.comments-count').textContent = picture.comments.length;
+  similarBigPictureElement.querySelector('.social__caption').textContent = picture.description;
 
-  return bigPictureElement;
+  var comments = document.createDocumentFragment();
+  picture.comments.forEach(function (comment) {
+    comments.appendChild(createComment(comment));
+  });
+  var commentsList = similarBigPictureElement.querySelector('.social__comments');
+  commentsList.appendChild(comments);
+
 };
-
-mockData.forEach(function (bigPicture) {
-  fragment.appendChild(renderBigPicture(bigPicture));
-});
-
 
 // функция для создания элемента
 var makeElement = function (tagName, className, text) {
@@ -112,17 +114,22 @@ var createComment = function (comment) {
   image.alt = comment.name;
   listItem.appendChild(image);
 
-  var text = document.createElement('p', 'social__text', comment.message);
+  var text = makeElement('p', 'social__text', comment.message);
   listItem.appendChild(text);
 
   return listItem;
 };
 
-var commentList = document.querySelector('.social__comments');
-var cardItem = createComment();
-commentList.appendChild(cardItem);
+renderBigPicture(mockData[0]);
 
+// прячет блок счётчика комментариев
+var commentCounter = document.querySelector('.social__comment-count');
+commentCounter.classList.add('hidden');
 
-// Отключение скролла на заднем фоне
+// прячет блок загрузки комментариев
+var commentLoader = document.querySelector('.comments-loader');
+commentLoader.classList.add('hidden');
+
+// Отключает скролл заднего фона
 var modalWindow = document.body;
 modalWindow.classList.add('modal-open');
