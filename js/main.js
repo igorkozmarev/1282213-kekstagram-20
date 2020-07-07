@@ -4,6 +4,8 @@ var LIKES_MIN = 15;
 var LIKES_MAX = 200;
 var NUMBER_AVATAR_MIN = 1;
 var NUMBER_AVATAR_MAX = 6;
+var MIN_HASHTAG_LENGTH = 2;
+var MAX_HASHTAG_LENGTH = 20;
 var PHOTO_OBJECT_FIELDS = {
   comments:
   [
@@ -75,8 +77,6 @@ mockData.forEach(function (picture) {
 similarPictureElement.appendChild(fragment);
 
 // Заполнение элемента данными
-
-
 var renderBigPicture = function (picture) {
   var similarBigPictureElement = document.querySelector('.big-picture');
   similarBigPictureElement.classList.remove('hidden');
@@ -119,8 +119,8 @@ var createComment = function (comment) {
 
   return listItem;
 };
-
-renderBigPicture(mockData[0]);
+// отоброжает большое фото и заполняет его данными
+// renderBigPicture(mockData[0]);
 
 // прячет блок счётчика комментариев
 var commentCounter = document.querySelector('.social__comment-count');
@@ -131,5 +131,81 @@ var commentLoader = document.querySelector('.comments-loader');
 commentLoader.classList.add('hidden');
 
 // Отключает скролл заднего фона
+// var modalWindow = document.body;
+// modalWindow.classList.add('modal-open');
+
+// module4-task2
+var uploadFile = document.querySelector('#upload-file');
+var uploadCancel = document.querySelector('#upload-cancel');
+var showForm = document.querySelector('.img-upload__overlay');
+// создаёт переменную с содержанием body
 var modalWindow = document.body;
-modalWindow.classList.add('modal-open');
+
+// Создаёт функцию для сброса обработчика закрытия
+var onPopupEscPress = function (evt) {
+  if (evt.key === 'Escape') {
+    evt.preventDefault();
+    closePopup();
+  }
+};
+
+// открывает форму редактирования
+var openPopup = function () {
+  showForm.classList.remove('hidden');
+
+  document.addEventListener('keydown', onPopupEscPress);
+  // Отключение скролла на заднем фоне
+  modalWindow.classList.add('modal-open');
+};
+
+// закрывает форму редактирования
+var closePopup = function () {
+  showForm.classList.add('hidden');
+
+  document.removeEventListener('keydown', onPopupEscPress);
+  // включает скролл заднего фона
+  modalWindow.classList.remove('modal-open');
+};
+
+uploadFile.onchange = function () {
+  openPopup();
+  // Закрывает форму клавишей ESCAPE
+  document.addEventListener('keydown', function (evt) {
+    if (evt.key === 'Escape') {
+      closePopup();
+    }
+  });
+};
+
+uploadCancel.addEventListener('click', function () {
+  closePopup();
+});
+
+// находит ползунок
+var effectLevelPin = document.querySelector('.effect-level__pin');
+effectLevelPin.mouseup = function () {
+
+};
+
+// создаёт массив с хэштегами
+var hashtagsArr = [];
+var textHashtags = document.querySelector('.text__hashtags');
+for (var l = 0; l < hashtagsArr.length; l++) {
+  hashtagsArr [l] = textHashtags.textcontent;
+}
+var re = /^#[a-zA-Zа-яА-Я0-9]*$/;
+
+
+var userHashtagInput = document.querySelector('.text__hashtags');
+
+userHashtagInput.addEventListener('input', function () {
+  var valueLength = userHashtagInput.value.length;
+
+  if (valueLength < MIN_HASHTAG_LENGTH) {
+    userHashtagInput.setCustomValidity('Ещё ' + (MIN_HASHTAG_LENGTH - valueLength) + ' симв.');
+  } else if (valueLength > MAX_HASHTAG_LENGTH) {
+    userHashtagInput.setCustomValidity('Удалите лишние ' + (valueLength - MAX_HASHTAG_LENGTH) + ' симв.');
+  } else {
+    userHashtagInput.setCustomValidity('');
+  }
+});
