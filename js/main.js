@@ -4,7 +4,7 @@ var LIKES_MIN = 15;
 var LIKES_MAX = 200;
 var NUMBER_AVATAR_MIN = 1;
 var NUMBER_AVATAR_MAX = 6;
-var MIN_HASHTAG_LENGTH = 2;
+var MAX_HASHTAG_QUANTITY = 5;
 var MAX_HASHTAG_LENGTH = 20;
 var PHOTO_OBJECT_FIELDS = {
   comments:
@@ -359,78 +359,41 @@ var getHeat = function () {
 heat.addEventListener('click', getHeat);
 heat.addEventListener('click', getEffects);
 
-// // создаёт массив с хэштегами
-
-
-// var userHashtags = [];
-// userHashtags = userHashtagInput.split(' ', re);
-// console.log(userHashtags);
-
-
-// userHashtagInput.addEventListener('input', function () {
-//   var valueLength = userHashtagInput.value.length;
-
-//   if (valueLength < MIN_HASHTAG_LENGTH) {
-//     userHashtagInput.setCustomValidity('Ещё ' + (MIN_HASHTAG_LENGTH - valueLength) + ' симв.');
-//   } else if (valueLength > MAX_HASHTAG_LENGTH) {
-//     userHashtagInput.setCustomValidity('Удалите лишние ' + (valueLength - MAX_HASHTAG_LENGTH) + ' симв.');
-//   } else {
-//     userHashtagInput.setCustomValidity('');
-//   }
-// });
 
 var userHashtagInput = document.querySelector('.text__hashtags');
-var formSubmit = function () {
-  var userHashtags = userHashtagInput.value.split(' ');
-  var duplicatesCounter = 0;
+var validateInput = function () {
+
+  var userHashtags = userHashtagInput.value.trim().toLowerCase().split(' ');
   userHashtagInput.setCustomValidity('');
-  testInfo(userHashtagInput);
-  for (var l = 0; l < userHashtags.length; l++) {
-    // Если элементе массива '#' встречается больше 1 раза - выводим CustomValidity
-    if (userHashtags[l].split('#').length - 1 > 1) {
-      userHashtagInput.setCustomValidity('Хеш-теги записываются через пробел');
+
+  userHashtags.forEach(function (hashtag) {
+    if (hashtag.length > MAX_HASHTAG_LENGTH) {
+      userHashtagInput.setCustomValidity('Максимальное количство символов 20');
     }
-    // Заканчивается на '#', точку или запятую ? - убрать
-    while (userHashtags[l].slice(-1) === '#' || userHashtags[l].slice(-1) === ',' || userHashtags[l].slice(-1) === '.' || userHashtags[l].slice(-1) === '/') {
-      userHashtags[l] = userHashtags[l].slice(0, -1);
-    }
-    // Проверка хэштега на наличие #
-    if (userHashtags[l].slice(0, 1) !== '#') {
-      userHashtagInput.setCustomValidity('Хеш-тег должен начинаться с символа #');
-    }
-    if (userHashtags[l].length > 20) {
-      userHashtagInput.setCustomValidity('Максимальная длина хэштега 20 символов');
-    }
-    // перевод в верхний регистр, сравниваем хэштеги
-    for (var m = 0; m < userHashtags.length; m++) {
-      if (userHashtags[l].toUpperCase() === userHashtags[m].toUpperCase()) {
-        duplicatesCounter++;
-      }
-      if (duplicatesCounter > userHashtags.length) {
-        userHashtagInput.setCustomValidity('Присутствуют повторяющиеся хэштеги');
-      }
-    }
-    // Выносим мусор и пустоты из массива
-    while (userHashtags[l] === '' || userHashtags[l] === '#' || userHashtags[l] === ' ') {
-      userHashtags.splice(l, 1);
-    }
-  }
-  if (userHashtags.length > 5) {
+    testInfo(hashtag);
+  });
+
+  if (userHashtags.length > MAX_HASHTAG_QUANTITY) {
     userHashtagInput.setCustomValidity('Максимальное количство хэштегов 5');
   }
-  userHashtagInput.value = userHashtags.join(' ');
+
+  if (userHashtags.index === userHashtags.lastIndex) {
+    userHashtagInput.setCustomValidity('');
+  } else {
+    userHashtagInput.setCustomValidity('Найдены одинаковые Хэш-теги; Хэш-теги не чувствительны к регистру: #ХэшТег и #хэштег являются одним и тем же тегом');
+  }
+
+  console.log(userHashtags);
 };
 
-userHashtagInput.addEventListener('blur', formSubmit);
+userHashtagInput.addEventListener('blur', validateInput);
 
-var re = /^#[a-zA-Zа-яА-Я0-9]*$/;
+var re = /^#[a-zA-ZёЁа-яА-Я0-9]*$/;
 // создаёт функцию проверки хэштегов с помощью регулярного выражения
-function testInfo() {
-  var userHashtags = re.exec(userHashtagInput.value);
+function testInfo(hashtag) {
+  var userHashtags = re.exec(hashtag);
   if (!userHashtags) {
-    userHashtagInput.setCustomValidity('Хеш-тег содержит недопустимые символы');
-  } else {
-    userHashtagInput.setCustomValidity('');
+    userHashtagInput.setCustomValidity('Хеш-тег должен начинаться с символа # (решётка); Хеш-тег не может состоять только из одной решётки; Хэш-тег может содержать только буквы и цифры; Не допускается содержания символов в Хэш-теге; Хэш-теги разделяются одним пробелом');
   }
 }
 
